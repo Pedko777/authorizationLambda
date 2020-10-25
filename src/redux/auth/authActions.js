@@ -20,6 +20,8 @@ const getCurrentUserRequest = createAction('auth/getCurrentUserRequest');
 const getCurrentUserSuccess = createAction('auth/getCurrentUserSuccess');
 const getCurrentUserError = createAction('auth/getCurrentUserError');
 
+const getErrorMessage = createAction('auth/getErrorMessage');
+
 export default {
   registerRequest,
   registerSuccess,
@@ -40,4 +42,6 @@ export default {
   refreshRequest,
   refreshSuccess,
   refreshError,
+
+  getErrorMessage,
 };

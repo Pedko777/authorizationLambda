@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { authOperations } from '../redux/auth';
-
+import { authSelectors } from '../redux/auth';
 const styles = {
   form: {
     width: 320,
@@ -10,6 +10,9 @@ const styles = {
     display: 'flex',
     flexDirection: 'column',
     padding: 4,
+  },
+  error: {
+    color: 'red',
   },
 };
 
@@ -43,28 +46,39 @@ class RegisterPage extends Component {
             <input
               type="email"
               name="email"
+              placeholder="Your@email.com"
               value={email}
               onChange={this.handleChange}
+              required
+              autoFocus
             />
           </label>
 
           <label style={styles.label}>
             Password
             <input
+              minLength="8"
+              placeholder="Password"
               type="password"
               name="password"
               value={password}
               onChange={this.handleChange}
+              required
+              autoFocus
             />
           </label>
-
+          <p style={styles.error}>
+            {this.props.error !== null ? 'Account is already exist' : ''}
+          </p>
           <button type="submit">Register</button>
         </form>
       </div>
     );
   }
 }
-// export default RegisterPage;
-export default connect(null, { onRegister: authOperations.register })(
-  RegisterPage,
-);
+const mapStateToProps = state => ({
+  error: authSelectors.isError(state),
+});
+export default connect(mapStateToProps, {
+  onRegister: authOperations.register,
+})(RegisterPage);

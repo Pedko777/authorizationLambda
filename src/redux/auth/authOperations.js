@@ -18,11 +18,32 @@ const register = credentials => dispatch => {
   axios
     .post('/sign_up', credentials)
     .then(response => {
-      //   token.set(response.data.token);
       dispatch(authActions.registerSuccess(response));
     })
     .catch(error => dispatch(authActions.registerError(error)));
 };
+
+// const register = credentials => async dispatch => {
+//   dispatch(authActions.registerRequest());
+//   const response = await axios.post('/sign_up', credentials);
+//   if (response.data.status === 'error') {
+//     return dispatch(authActions.registerError(response.data));
+//   }
+//   dispatch(authActions.registerSuccess(response));
+
+//   if (response.status === 200) {
+//     const response = await axios
+//       .headers()
+//       .post(
+//         `/login?email=${credentials.email}&password=${credentials.password}`,
+//       );
+//     if (response.data.status === 'error') {
+//       return dispatch(authActions.loginError(response.data));
+//     }
+//     dispatch(authActions.loginSuccess(response));
+//     await token.set(response.data.body.access_token);
+//   }
+// };
 
 const logIn = credentials => dispatch => {
   dispatch(authActions.loginRequest());
@@ -32,18 +53,18 @@ const logIn = credentials => dispatch => {
       credentials,
     )
     .then(response => {
-      //   token.set(response.data.body.access_token);
       dispatch(authActions.loginSuccess(response));
     })
-    .catch(error => dispatch(authActions.loginError(error)));
+    .catch(error => {
+      dispatch(authActions.loginError(error));
+    });
 };
 
 const getCurrentUser = () => (dispatch, getState) => {
   const {
     auth: { access_token: tokenAccess, refresh_token: tokenRefresh },
   } = getState();
-  //   console.log('tokenAccess', tokenAccess);
-  //   console.log('tokenRefresh', tokenRefresh);
+
   if (!tokenAccess && !tokenRefresh) {
     return;
   }
@@ -56,12 +77,13 @@ const getCurrentUser = () => (dispatch, getState) => {
       })
       .catch(error => authActions.getCurrentUserError(error));
   } else {
+    dispatch(authActions.refreshRequest());
     token.set(tokenRefresh);
     axios
       .post('/refresh')
-      .then(response => dispatch(authActions.refreshSuccess(response)));
+      .then(response => dispatch(authActions.refreshSuccess(response)))
+      .catch(error => authActions.refreshError(error));
   }
-  //   token.set(persistedToken);
   dispatch(authActions.getCurrentUserRequest());
 };
 

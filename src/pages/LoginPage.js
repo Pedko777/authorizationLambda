@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { authOperations } from '../redux/auth';
+import { authSelectors } from '../redux/auth';
 
 const styles = {
   form: {
@@ -10,6 +11,9 @@ const styles = {
     display: 'flex',
     flexDirection: 'column',
     padding: 4,
+  },
+  error: {
+    color: 'red',
   },
 };
 
@@ -43,20 +47,30 @@ class LoginPage extends Component {
             <input
               type="email"
               name="email"
+              placeholder="Your@email.com"
               value={email}
               onChange={this.handleChange}
+              required
+              autoFocus
             />
           </label>
 
           <label style={styles.label}>
             Password
             <input
+              minLength="8"
+              placeholder="Password"
               type="password"
               name="password"
               value={password}
               onChange={this.handleChange}
+              required
+              autoFocus
             />
           </label>
+          <p style={styles.error}>
+            {this.props.error !== null ? 'Wrong pass or email' : ''}
+          </p>
           <button type="submit">Login</button>
         </form>
       </div>
@@ -64,6 +78,10 @@ class LoginPage extends Component {
   }
 }
 
-// export default LoginPage;
+const mapStateToProps = state => ({
+  error: authSelectors.isError(state),
+});
 
-export default connect(null, { onLogin: authOperations.logIn })(LoginPage);
+export default connect(mapStateToProps, { onLogin: authOperations.logIn })(
+  LoginPage,
+);
