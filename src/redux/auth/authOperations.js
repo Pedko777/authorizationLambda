@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { Route } from 'react-router-dom';
 import authActions from './authActions';
 
 axios.defaults.baseURL = 'http://142.93.134.108:1111';
@@ -15,6 +14,7 @@ const token = {
 
 const register = credentials => dispatch => {
   dispatch(authActions.registerRequest());
+
   axios
     .post('/sign_up', credentials)
     .then(response => {
@@ -22,28 +22,6 @@ const register = credentials => dispatch => {
     })
     .catch(error => dispatch(authActions.registerError(error)));
 };
-
-// const register = credentials => async dispatch => {
-//   dispatch(authActions.registerRequest());
-//   const response = await axios.post('/sign_up', credentials);
-//   if (response.data.status === 'error') {
-//     return dispatch(authActions.registerError(response.data));
-//   }
-//   dispatch(authActions.registerSuccess(response));
-
-//   if (response.status === 200) {
-//     const response = await axios
-//       .headers()
-//       .post(
-//         `/login?email=${credentials.email}&password=${credentials.password}`,
-//       );
-//     if (response.data.status === 'error') {
-//       return dispatch(authActions.loginError(response.data));
-//     }
-//     dispatch(authActions.loginSuccess(response));
-//     await token.set(response.data.body.access_token);
-//   }
-// };
 
 const logIn = credentials => dispatch => {
   dispatch(authActions.loginRequest());

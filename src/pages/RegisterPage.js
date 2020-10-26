@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Redirect } from 'react-router-dom';
 import { authOperations } from '../redux/auth';
 import { authSelectors } from '../redux/auth';
 const styles = {
@@ -32,7 +31,6 @@ class RegisterPage extends Component {
 
     this.props.onRegister({ ...this.state });
     this.setState({ email: '', password: '' });
-    // <Redirect to={}/>
   };
 
   render() {
@@ -80,7 +78,6 @@ class RegisterPage extends Component {
 }
 const mapStateToProps = state => ({
   error: authSelectors.isError(state),
-  registerSuccess: authSelectors.isRegister(state),
 });
 export default connect(mapStateToProps, {
   onRegister: authOperations.register,
