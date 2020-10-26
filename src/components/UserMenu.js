@@ -11,13 +11,10 @@ const styles = {
 
 const UserMenu = ({ onLogout }) => (
   <div style={styles.container}>
-    <span style={styles.name}>Welcome </span>
     <button type="button" onClick={onLogout}>
       Logout
     </button>
   </div>
 );
-
-// export default UserMenu;
 
 export default connect(null, { onLogout: authOperations.logOut })(UserMenu);

@@ -24,13 +24,13 @@ const error = createReducer(null, {
   [authActions.getCurrentUserError]: (_, { payload }) => payload,
 });
 
-// const errorMessage = createReducer(null, {
-//   [authActions.getErrorMessage]: (_, { payload }) => payload,
-// });
+const register = createReducer(null, {
+  [authActions.registerSuccess]: (_, { payload }) => payload,
+});
 
 export default combineReducers({
   access_token,
   refresh_token,
   error,
-  // errorMessage,
+  register,
 });

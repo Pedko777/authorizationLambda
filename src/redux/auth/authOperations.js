@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { Route } from 'react-router-dom';
 import authActions from './authActions';
 
 axios.defaults.baseURL = 'http://142.93.134.108:1111';
@@ -14,7 +15,6 @@ const token = {
 
 const register = credentials => dispatch => {
   dispatch(authActions.registerRequest());
-
   axios
     .post('/sign_up', credentials)
     .then(response => {
@@ -64,27 +64,49 @@ const getCurrentUser = () => (dispatch, getState) => {
   const {
     auth: { access_token: tokenAccess, refresh_token: tokenRefresh },
   } = getState();
-
   if (!tokenAccess && !tokenRefresh) {
     return;
   }
-  if (tokenAccess) {
+  const me = () => {
+    const {
+      auth: { access_token: tokenAccess },
+    } = getState();
     token.set(tokenAccess);
     axios
       .get('/me')
       .then(response => {
-        dispatch(authActions.getCurrentUserSuccess(response));
+        if (response.data.body.status === 'error') {
+          refresh();
+        } else {
+          dispatch(authActions.getCurrentUserSuccess(response));
+        }
       })
       .catch(error => authActions.getCurrentUserError(error));
-  } else {
+  };
+
+  const refresh = () => {
+    if (!tokenRefresh) {
+      return;
+    }
     dispatch(authActions.refreshRequest());
     token.set(tokenRefresh);
+
     axios
       .post('/refresh')
-      .then(response => dispatch(authActions.refreshSuccess(response)))
+      .then(response => {
+        dispatch(authActions.refreshSuccess(response));
+        if (response.data.statusCode === 200) {
+          me();
+        }
+      })
       .catch(error => authActions.refreshError(error));
+  };
+
+  if (tokenAccess) {
+    token.set(tokenAccess);
+    me();
+    dispatch(authActions.getCurrentUserRequest());
   }
-  dispatch(authActions.getCurrentUserRequest());
 };
 
 const logOut = () => dispatch => {
